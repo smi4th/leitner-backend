@@ -57,3 +57,4 @@ gcloud functions deploy discordNotifier \
   --region=europe-west1 \
   --set-env-vars DISCORD_WEBHOOK_URL=<url-du-webhook-discord>
 ```
+
