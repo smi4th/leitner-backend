@@ -1,0 +1,30 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/leinter-backend/api-leitner:$COMMIT_SHA', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/leinter-backend/api-leitner:$COMMIT_SHA']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'api-leitner'
+      - '--image'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/leinter-backend/api-leitner:$COMMIT_SHA'
+      - '--region'
+      - 'europe-west1'
+      - '--allow-unauthenticated'
+      - '--add-cloudsql-instances'
+      - 'partiel-cloud:europe-west1:leitner-db'
+      - '--set-env-vars'
+      - 'SPRING_PROFILES_ACTIVE=prod'
+      - '--set-secrets'
+      - '^|^DATABASE_URL=DATABASE_URL:latest|DATABASE_USERNAME=DATABASE_USERNAME:latest|DATABASE_PASSWORD=DATABASE_PASSWORD:latest|CLOUD_TASKS_PROJECT_ID=CLOUD_TASKS_PROJECT_ID:latest|CLOUD_TASKS_LOCATION=CLOUD_TASKS_LOCATION:latest|CLOUD_TASKS_QUEUE=CLOUD_TASKS_QUEUE:latest|CLOUD_FUNCTION_URL=CLOUD_FUNCTION_URL:latest|CLOUD_TASKS_SERVICE_ACCOUNT=CLOUD_TASKS_SERVICE_ACCOUNT:latest'
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/leinter-backend/api-leitner:$COMMIT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

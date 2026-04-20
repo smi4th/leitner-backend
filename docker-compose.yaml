@@ -1,0 +1,16 @@
+services:
+  psql:
+    image: postgres:18
+    container_name: postgres_leitner
+    environment:
+      POSTGRES_USER: esgi
+      POSTGRES_PASSWORD: esgi
+      POSTGRES_DB: esgi
+    ports:
+      - "5432:5432"
+    volumes:
+      - leitner_data:/var/lib/postgresql/data
+
+
+volumes:
+  leitner_data:
